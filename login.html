@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Esta línea hace que la página se adapte al ancho del celular
+       en lugar de mostrarse como una versión de escritorio reducida -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SIGER – Inicio de sesión</title>
+
+  <!-- Primero se carga el CSS compartido y después el de la pantalla.
+       El orden importa: lo último puede sobrescribir lo anterior. -->
+  <link rel="stylesheet" href="css/siger.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <div class="login">
+
+    <!-- Panel izquierdo: presenta la marca y sus beneficios -->
+    <section class="login__marca">
+      <div class="marca"><div class="logo">S</div><strong>SIGER</strong></div>
+      <h1>Gestión de eventos, sin complicaciones.</h1>
+      <p>Crea eventos, reserva cupos y controla la asistencia desde un solo lugar.</p>
+      <ul>
+        <li>Cupos disponibles en tiempo real</li>
+        <li>Comprobante digital con código QR</li>
+        <li>Control de asistencia en vivo</li>
+      </ul>
+    </section>
+
+    <!-- Panel derecho: contiene el formulario de acceso.
+         El atributo action indica a qué página viaja la persona al
+         enviar el formulario. Por ahora es una conexión de prueba;
+         más adelante el servidor validará las credenciales. -->
+    <section class="login__formulario">
+      <form class="tarjeta formulario" action="participante.html">
+        <div>
+          <h2>Bienvenido de nuevo</h2>
+          <p class="sec">Ingresa a tu cuenta para continuar</p>
+        </div>
+
+        <!-- Selector de rol: tres botones de radio que comparten el mismo
+             name, así que solo uno puede estar marcado a la vez.
+             Cada rol recibe su color mediante la variable --c. -->
+        <div>
+          <span class="etiqueta">Ingresar como</span>
+          <div class="roles">
+            <label class="rol" style="--c:#2563EB">
+              <input type="radio" name="rol" value="participante" checked>Participante
+            </label>
+            <label class="rol" style="--c:#7C3AED">
+              <input type="radio" name="rol" value="organizador">Organizador
+            </label>
+            <label class="rol" style="--c:#DC2626">
+              <input type="radio" name="rol" value="administrador">Administrador
+            </label>
+          </div>
+        </div>
+
+        <!-- Por ahora las pestañas son solo visuales. El cambio real
+             entre iniciar sesión y registrarse llegará con JavaScript. -->
+        <div class="pestanas">
+          <button type="button" class="activa">Iniciar sesión</button>
+          <button type="button">Registrarse</button>
+        </div>
+
+        <!-- El for de cada label coincide con el id de su campo.
+             Gracias a ello, un clic sobre el texto activa el campo. -->
+        <div>
+          <label for="correo">Correo electrónico</label>
+          <input class="campo" id="correo" type="email" placeholder="tucorreo@ejemplo.com">
+        </div>
+
+        <div>
+          <label for="clave">Contraseña</label>
+          <!-- type="password" oculta lo que se escribe -->
+          <input class="campo" id="clave" type="password">
+          <p class="olvido"><a href="#">¿Olvidaste tu contraseña?</a></p>
+        </div>
+
+        <button class="btn" type="submit">Iniciar sesión</button>
+      </form>
+    </section>
+
+  </div>
+</body>
+</html>

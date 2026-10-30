@@ -1,0 +1,88 @@
+/* 
+   Portal del participante · Catálogo de eventos
+  */
+
+/* El contenido se centra y se limita a 1216 px de ancho para que
+   en monitores grandes las tarjetas no se estiren demasiado.
+   margin: 0 auto es la forma clásica de centrar un bloque. */
+.contenido {
+  max-width: 1216px;
+  margin: 0 auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.contenido h1 { font-size: 26px; }
+.sec { color: var(--texto-2); font-size: 14px; margin-top: 4px; }
+
+/* flex-wrap permite que las tarjetas de datos bajen a una segunda
+   fila cuando la pantalla es estrecha, en vez de aplastarse */
+.resumen { display: flex; gap: 16px; flex-wrap: wrap; }
+.resumen .dato { min-width: 160px; }
+
+/* Buscador y chips */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.buscador { width: 320px; margin-right: 8px; }
+
+/* Los chips son botones con forma de píldora (radio de 99 px) */
+.chip {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--borde-campo);
+  border-radius: 99px;
+  background: #fff;
+  font: 500 13px Inter, sans-serif;
+  color: #334155;
+  cursor: pointer;
+}
+/* El chip activo invierte los colores para destacar la categoría elegida */
+.chip--activo { background: var(--azul); border-color: var(--azul); color: #fff; }
+
+/* Catálogo en cuadrícula 
+   repeat(3, 1fr) crea tres columnas del mismo ancho.
+   Cuando se agreguen más eventos, la cuadrícula crece hacia
+   abajo por sí sola. */
+.catalogo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* overflow: hidden recorta la banda de color con las esquinas
+   redondeadas de la tarjeta */
+.evento { overflow: hidden; }
+
+/* La banda toma su color de la variable --c de cada tarjeta, por eso
+   una sola regla sirve para todas las categorías */
+.evento__banda { height: 88px; padding: 16px; background: var(--c); }
+.evento__categoria {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: #fff;
+  color: var(--c);
+  font: 600 12px Inter, sans-serif;
+}
+.evento__cuerpo { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.evento h2 { font-size: 17px; }
+.evento p { font-size: 13px; color: var(--texto-2); line-height: 1.6; }
+.evento .btn { width: 100%; }
+
+/* Barra de cupos 
+   Dos capas: el riel gris (.cupo) y el relleno (la etiqueta i),
+   cuyo ancho indica cuánto del evento está ocupado. */
+.cupo { height: 6px; border-radius: 9px; background: var(--borde); }
+.cupo i { display: block; height: 6px; border-radius: 9px; background: var(--azul); }
+.evento small { display: block; margin-top: 6px; font-size: 12px; color: var(--texto-2); }
+
+/* Adaptación a pantallas menores 
+   Cada regla @media entra en vigor cuando el ancho de la ventana
+   es igual o menor al indicado: tres columnas, luego dos, luego una. */
+@media (max-width: 1000px) { .catalogo { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) {
+  .catalogo { grid-template-columns: 1fr; }
+  .buscador { width: 100%; margin-right: 0; }
+  .barra { padding: 0 16px; }
+  .contenido { padding: 20px 16px; }
+}

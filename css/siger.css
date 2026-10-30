@@ -1,0 +1,157 @@
+/* 
+   SIGER · Estilos compartidos
+   Este archivo reúne lo que todas las pantallas comparten:
+   colores, tipografía y componentes reutilizables.
+   Cada pantalla tiene además su propio archivo CSS.
+  */
+
+/* La tipografía Inter se descarga desde Google Fonts.
+   Si no hubiera internet, el navegador usa la fuente del sistema. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/*Variables del diseño
+   Los valores se definen una sola vez. Quien necesite cambiar
+   un color de la marca lo hace aquí y el cambio llega a todas
+   las pantallas. */
+:root {
+  /* Un color por rol: la persona reconoce dónde está por su color */
+  --azul: #2563EB;     /* participante */
+  --morado: #7C3AED;   /* organizador */
+  --rojo: #DC2626;     /* administrador */
+
+  --marino: #0B1B3B;   /* fondo de paneles oscuros */
+  --fondo: #F1F5F9;    /* fondo general de las páginas */
+  --borde: #E2E8F0;
+  --borde-campo: #CBD5E1;
+  --texto: #0F172A;
+  --texto-2: #475569;  /* texto secundario, con contraste suficiente */
+
+  --radio: 10px;           /* esquinas de botones y campos */
+  --radio-tarjeta: 12px;   /* esquinas de tarjetas */
+}
+
+/* Con border-box, el ancho de un elemento incluye su relleno y
+   su borde. Sin esta regla, las medidas se desordenan. */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--texto);
+  background: var(--fondo);
+}
+
+/* Los navegadores añaden márgenes propios a estos elementos;
+   se eliminan para que el espacio lo controle el diseño. */
+h1, h2, p { margin: 0; }
+a { color: #1D4ED8; }
+
+/*Componentes reutilizables */
+
+/* La tarjeta es el contenedor base de casi toda la interfaz */
+.tarjeta {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-tarjeta);
+}
+
+/* El botón principal mide 44 px de alto: es el tamaño mínimo
+   cómodo para tocarlo con el dedo en un celular */
+.btn {
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--radio);
+  background: var(--azul);
+  color: #fff;
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+}
+
+/* Campo de texto con la misma altura que el botón, para que
+   ambos queden alineados en cualquier formulario */
+.campo {
+  height: 44px;
+  width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: #fff;
+  font: 14px Inter, sans-serif;
+}
+
+label, .etiqueta {
+  display: block;
+  margin-bottom: 6px;
+  font: 600 13px Inter, sans-serif;
+  color: #334155;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--azul);
+  color: #fff;
+  font: 700 16px Inter, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*Barra superior (portal del participante) */
+.barra {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 32px;
+  background: #fff;
+  border-bottom: 1px solid var(--borde);
+}
+
+/* Elemento vacío que ocupa todo el espacio libre. Empuja lo que
+   viene después (notificaciones, avatar, salida) hacia la derecha. */
+.barra__espacio { flex: 1; }
+
+.etiqueta-rol {
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: #DBEAFE;
+  color: #1E40AF;
+  font: 600 12px Inter, sans-serif;
+}
+
+/* Círculo con las iniciales de la persona */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--azul);
+  color: #fff;
+  font: 600 14px Inter, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botón que solo contiene un ícono */
+.icono {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: var(--texto-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Tarjeta de dato: un número grande con su descripción */
+.dato { padding: 20px; flex: 1; }
+.dato strong { display: block; font-size: 30px; }
+.dato span { font-size: 13px; color: var(--texto-2); }
+
+/* Un botón deshabilitado se ve apagado y no responde al clic */
+.btn:disabled { background: #CBD5E1; color: #334155; cursor: not-allowed; }

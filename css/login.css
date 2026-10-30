@@ -1,0 +1,97 @@
+/*
+   Pantalla de inicio de sesión
+   La página se divide en dos mitades: marca a la izquierda y
+   formulario a la derecha.
+   */
+
+/* Flexbox coloca ambos paneles en fila. Con min-height: 100vh
+   la página ocupa siempre el alto completo de la ventana. */
+.login { display: flex; min-height: 100vh; }
+
+/* Panel izquierdo */
+.login__marca {
+  flex: 1;                       /* cada panel toma la mitad del ancho */
+  background: var(--marino);
+  color: #fff;
+  padding: 64px;
+  display: flex;
+  flex-direction: column;        /* los elementos se apilan hacia abajo */
+  justify-content: center;       /* y quedan centrados en vertical */
+  gap: 24px;                     /* espacio uniforme entre elementos */
+}
+.marca { display: flex; align-items: center; gap: 10px; font-size: 20px; }
+.login__marca h1 { font-size: 44px; line-height: 1.1; max-width: 440px; }
+.login__marca p { color: #CBD5E1; max-width: 420px; line-height: 1.5; }
+.login__marca ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 12px; color: #E2E8F0;
+}
+
+/* ::before inserta una marca de verificación antes de cada beneficio
+   sin necesidad de añadir nada al HTML */
+.login__marca li::before { content: "✓"; color: #60A5FA; margin-right: 10px; font-weight: 700; }
+
+/* ---------- Panel derecho ---------- */
+.login__formulario {
+  flex: 1;
+  display: flex;
+  align-items: center;           /* centra la tarjeta en vertical */
+  justify-content: center;       /* y en horizontal */
+  padding: 32px;
+}
+.formulario {
+  width: 440px;
+  max-width: 100%;               /* en pantallas pequeñas nunca se desborda */
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.formulario h2 { font-size: 24px; }
+.sec { color: var(--texto-2); font-size: 14px; margin-top: 4px; }
+.olvido { text-align: right; margin-top: 8px; font-size: 13px; }
+
+/*Selector de rol*/
+/* Grid reparte los tres botones en columnas iguales */
+.roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rol {
+  position: relative;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; margin: 0;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: #fff;
+  font: 600 13px Inter, sans-serif;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* El punto de color del rol se dibuja con ::before,
+   tomando el color de la variable --c definida en el HTML */
+.rol::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+
+/* El círculo de radio del navegador se vuelve invisible: toda la
+   caja funciona como botón, pero la lógica de elegir uno sigue intacta */
+.rol input { position: absolute; opacity: 0; }
+
+/* :has(input:checked) detecta cuál rol está marcado y resalta
+   su caja completa */
+.rol:has(input:checked) { border: 2px solid var(--azul); background: #EFF6FF; color: #1E40AF; }
+
+/*Pestañas*/
+.pestanas {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  padding: 4px; background: var(--borde); border-radius: var(--radio);
+}
+.pestanas button {
+  height: 40px; border: 0; border-radius: 8px; background: transparent;
+  font: 500 14px Inter, sans-serif; color: #334155; cursor: pointer;
+}
+.pestanas .activa { background: #fff; font-weight: 600; color: var(--texto); }
+
+/*Pantallas pequeñas 
+   Por debajo de 800 px de ancho no cabe todo cómodamente, así que
+   el panel de marca se oculta y queda solo el formulario. */
+@media (max-width: 800px) {
+  .login__marca { display: none; }
+}
