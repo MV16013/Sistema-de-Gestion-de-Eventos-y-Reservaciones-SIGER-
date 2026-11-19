@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Asistencia;
+use App\Models\Reserva;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class AsistenciaController extends Controller
+{
+    public function registrar(Request $request)
+    {
+        $usuario = $request->user();
+
+        if (!in_array($usuario->rol?->nombre, [
+            'ADMINISTRADOR',
+            'ORGANIZADOR',
+        ], true)) {
+            return response()->json([
+                'mensaje' => 'No tienes permiso para registrar asistencias.'
+            ], 403);
+        }
+
+        $datos = $request->validate([
+            'codigo_confirmacion' => ['required', 'string'],
+        ]);
+
+        return DB::transaction(function () use ($usuario, $datos) {
+
+            $reserva = Reserva::where(
+                'codigo_confirmacion',
+                $datos['codigo_confirmacion']
+            )->lockForUpdate()->first();
+
+            if (!$reserva) {
+                return response()->json([
+                    'mensaje' => 'Código de confirmación inválido.'
+                ], 404);
+            }
+
+            if ($reserva->estado !== 'CONFIRMADA') {
+                return response()->json([
+                    'mensaje' => 'La reserva no está confirmada.'
+                ], 422);
+            }
+
+            $evento = $reserva->evento;
+
+            if (!$evento || $evento->estado !== 'PROGRAMADO') {
+                return response()->json([
+                    'mensaje' => 'El evento no está disponible.'
+                ], 422);
+            }
+
+            if (
+                $usuario->rol?->nombre === 'ORGANIZADOR'
+                && $evento->id_organizador !== $usuario->id_usuario
+            ) {
+                return response()->json([
+                    'mensaje' => 'No puedes registrar asistencias de otro organizador.'
+                ], 403);
+            }
+
+            if (Asistencia::where('id_reserva', $reserva->id_reserva)->exists()) {
+                return response()->json([
+                    'mensaje' => 'Esta asistencia ya fue registrada.'
+                ], 409);
+            }
+
+            $asistencia = Asistencia::create([
+                'id_reserva' => $reserva->id_reserva,
+            ]);
+
+            return response()->json([
+                'mensaje' => 'Asistencia registrada correctamente',
+                'asistencia' => $asistencia,
+            ], 201);
+        }, 3);
+    }
+}
