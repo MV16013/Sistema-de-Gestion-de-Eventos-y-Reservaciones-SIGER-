@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventoController;
 use App\Http\Controllers\Api\ReservaController;
 use App\Http\Controllers\Api\AsistenciaController;
-
+use App\Http\Controllers\Api\NotificacionController;
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -29,4 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/asistencias', [AsistenciaController::class, 'registrar']);
 
+    // Notificaciones del usuario autenticado
+    Route::get('/notificaciones', [NotificacionController::class, 'index']);
+    Route::get('/notificaciones/no-leidas', [NotificacionController::class, 'noLeidas']);
+    Route::patch('/notificaciones/{id}/leer', [NotificacionController::class, 'marcarLeida']);
 });
