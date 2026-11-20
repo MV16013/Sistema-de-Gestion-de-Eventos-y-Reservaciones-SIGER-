@@ -138,13 +138,32 @@ body{
 .siger-roles{
     display:flex;
     flex-wrap:wrap;
-    gap:.5rem}
+    gap:.9rem}
 
-.siger-rol{
-    padding:.45rem .6rem;
-    border:1px solid var(--siger-azul);
-    border-radius:8px;color:var(--siger-texto);
-    font-size:.8rem;font-weight:700}
+.siger-rol {
+    cursor: pointer;
+    background: white;
+    color: var(--c);
+    border: 1px solid var(--c);
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.siger-rol:hover {
+    background: color-mix(in srgb, var(--c) 10%, white);
+}
+
+.siger-rol--activo {
+    background: var(--c);
+    color: white;
+}
+
+.siger-rol--activo:hover {
+    background: var(--c);
+    filter: brightness(0.9);
+}
 
 .siger-pestanas{
     display:grid;

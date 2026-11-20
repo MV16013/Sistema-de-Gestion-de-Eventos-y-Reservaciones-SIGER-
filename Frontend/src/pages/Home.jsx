@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate} from 'react-router-dom';
 import api from '../services/api';
 
 const fecha = value => value ? new Intl.DateTimeFormat('es-SV', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value)) : 'Fecha por confirmar';
 
 export default function Home() {
-  const navigate = useNavigate();
   const [eventos, setEventos] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [noLeidas, setNoLeidas] = useState(0);
@@ -50,14 +49,6 @@ export default function Home() {
   const disponibles = useMemo(() => eventos.filter(e => e.estado === 'PROGRAMADO' && `${e.nombre} ${e.ubicacion}`.toLowerCase().includes(busqueda.toLowerCase())), [eventos, busqueda]);
   const misIds = new Set(reservas.filter(r => ['PENDIENTE', 'CONFIRMADA'].includes(r.estado)).map(r => r.id_evento));
   if (!token || !usuario) return <Navigate to="/login" replace />;
-
-  async function salir() {
-    try { await api.post('/logout'); } catch { /* limpiar sesión local incluso si falla la red */ }
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('usuario');
-    navigate('/login', { replace: true });
-  }
-
   async function reservar(id) {
     setError(''); setMensaje(''); setReservando(id);
     try {
@@ -73,21 +64,6 @@ export default function Home() {
   const iniciales = `${usuario.nombre?.[0] || ''}${usuario.apellido?.[0] || ''}`.toUpperCase();
   return (
     <div className="siger-portal">
-      <header className="siger-barra">
-        <div className="siger-logo">S</div><strong>SIGER</strong>
-        <span className="siger-etiqueta-rol">{rol === 'PARTICIPANTE' ? 'Portal de participantes' : rol === 'ORGANIZADOR' ? 'Portal de organizadores' : 'Portal de administración'}</span>
-        <div className="siger-barra__espacio" />
-        <Link
-            to="/notificaciones"
-            className="siger-notificacion"
-            title="Ver notificaciones"
-        >
-          <i className="bi bi-bell"></i>
-          <b className="ms-1">{noLeidas}</b>
-        </Link>
-        <span className="siger-avatar" title={`${usuario.nombre} ${usuario.apellido}`}>{iniciales}</span>
-        <button className="siger-salir" type="button" onClick={salir}>Salir</button>
-      </header>
       <main className="siger-contenido">
         <div className="siger-encabezado"><h1>Eventos disponibles</h1><p className="siger-sec">Encuentra un evento y reserva tu cupo</p></div>
         <Link to="/mis-reservas" className="btn btn-outline-primary">
