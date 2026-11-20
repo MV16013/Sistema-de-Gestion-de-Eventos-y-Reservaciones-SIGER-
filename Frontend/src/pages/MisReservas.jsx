@@ -73,7 +73,7 @@ export default function MisReservas() {
             </div>
 
             <div className="my-4">
-                <Link to="/" className="btn btn-outline-primary">
+                <Link to="/eventos" className="btn btn-outline-primary">
                     <i className="bi bi-arrow-left me-2" />
                     Volver a eventos
                 </Link>
