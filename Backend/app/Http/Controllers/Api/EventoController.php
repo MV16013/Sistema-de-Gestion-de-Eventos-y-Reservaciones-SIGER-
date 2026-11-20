@@ -7,7 +7,6 @@ use App\Models\Evento;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 
 class EventoController extends Controller
 {
@@ -28,6 +27,29 @@ class EventoController extends Controller
             ]);
 
         return response()->json($eventos);
+    }
+
+    public function misEventos(Request $request): JsonResponse
+    {
+        // Solo organizadores y administradores.
+        abort_unless(
+            in_array($request->user()->rol?->nombre, [
+                'ORGANIZADOR',
+                'ADMINISTRADOR',
+            ], true),
+            403,
+            'No tienes permisos para consultar estos eventos.'
+        );
+
+        // Obtener únicamente los eventos del usuario autenticado.
+        $eventos = Evento::query()
+            ->where('id_organizador', $request->user()->id_usuario)
+            ->orderByDesc('id_evento')
+            ->get();
+
+        return response()->json([
+            'eventos' => $eventos,
+        ]);
     }
 
     public function show(int $id): JsonResponse
@@ -84,6 +106,15 @@ class EventoController extends Controller
         ], 201);
     }
 
+    public function editar(Request $request, Evento $evento): JsonResponse
+    {
+        // Verificar que el usuario pueda editar este evento.
+        Gate::authorize('update', $evento);
+
+        return response()->json([
+            'evento' => $evento,
+        ]);
+    }
     public function update(Request $request, Evento $evento)
     {
         Gate::authorize('update', $evento);
@@ -132,6 +163,72 @@ class EventoController extends Controller
             'mensaje' => 'Evento cancelado correctamente',
             'evento' => $evento
         ], 200);
+    }
+
+
+    public function participantes(Request $request, Evento $evento): JsonResponse
+    {
+        $usuario = $request->user();
+
+        // Solo organizadores y administradores.
+        if (!in_array($usuario->rol?->nombre, [
+            'ORGANIZADOR',
+            'ADMINISTRADOR',
+        ], true)) {
+            return response()->json([
+                'mensaje' => 'No tienes permiso para consultar participantes.'
+            ], 403);
+        }
+
+        // Un organizador solamente puede consultar sus eventos.
+        if (
+            $usuario->rol?->nombre === 'ORGANIZADOR'
+            && $evento->id_organizador !== $usuario->id_usuario
+        ) {
+            return response()->json([
+                'mensaje' => 'Este evento pertenece a otro organizador.'
+            ], 403);
+        }
+
+        $reservas = $evento->reservas()
+            ->with([
+                'usuario:id_usuario,nombre,apellido,correo',
+                'asistencia:id_asistencia,id_reserva,fecha_registro',
+            ])
+            ->orderByDesc('fecha_reserva')
+            ->get()
+            ->map(function ($reserva) {
+                return [
+                    'id_reserva' => $reserva->id_reserva,
+                    'participante' => [
+                        'nombre' => $reserva->usuario?->nombre,
+                        'apellido' => $reserva->usuario?->apellido,
+                        'correo' => $reserva->usuario?->correo,
+                    ],
+                    'codigo_confirmacion' => $reserva->codigo_confirmacion,
+                    'estado' => $reserva->estado,
+                    'fecha_reserva' => $reserva->fecha_reserva,
+                    'asistencia_registrada' => $reserva->asistencia !== null,
+                    'fecha_asistencia' => $reserva->asistencia?->fecha_registro,
+                ];
+            });
+
+        return response()->json([
+            'evento' => [
+                'id_evento' => $evento->id_evento,
+                'nombre' => $evento->nombre,
+                'estado' => $evento->estado,
+                'capacidad_maxima' => $evento->capacidad_maxima,
+            ],
+            'resumen' => [
+                'total_reservas' => $reservas->count(),
+                'confirmadas' => $reservas->where('estado', 'CONFIRMADA')->count(),
+                'pendientes' => $reservas->where('estado', 'PENDIENTE')->count(),
+                'canceladas' => $reservas->where('estado', 'CANCELADA')->count(),
+                'asistencias' => $reservas->where('asistencia_registrada', true)->count(),
+            ],
+            'participantes' => $reservas->values(),
+        ]);
     }
 
 }

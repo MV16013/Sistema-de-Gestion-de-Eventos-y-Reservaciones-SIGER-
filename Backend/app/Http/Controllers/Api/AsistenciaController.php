@@ -25,6 +25,7 @@ class AsistenciaController extends Controller
 
         $datos = $request->validate([
             'codigo_confirmacion' => ['required', 'string'],
+            'id_evento' => ['required', 'integer', 'exists:evento,id_evento', ],
         ]);
 
         return DB::transaction(function () use ($usuario, $datos) {
@@ -51,6 +52,12 @@ class AsistenciaController extends Controller
             if (!$evento || $evento->estado !== 'PROGRAMADO') {
                 return response()->json([
                     'mensaje' => 'El evento no está disponible.'
+                ], 422);
+            }
+
+            if ($reserva->id_evento !== (int) $datos['id_evento']) {
+                return response()->json([
+                    'mensaje' => 'El código no pertenece al evento seleccionado.'
                 ], 422);
             }
 
