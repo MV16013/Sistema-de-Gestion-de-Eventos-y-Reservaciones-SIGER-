@@ -43,7 +43,7 @@ export default function DashboardOrganizador() {
                 </Link>
 
                 <Link
-                    to="/organizador/eventos/nuevo"
+                    to="/organizador/crear-evento"
                     className="btn btn-outline-primary"
                 >
                     <i className="bi bi-plus-circle me-2" />

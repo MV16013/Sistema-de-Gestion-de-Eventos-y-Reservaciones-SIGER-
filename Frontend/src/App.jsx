@@ -10,9 +10,12 @@ import Registro from './pages/Registro';
 import Home from './pages/Home';
 import MisReservas from './pages/MisReservas';
 import Notificaciones from './pages/Notificaciones';
-
 import PortalLayout from './assets/layout/PortalLayout';
 import DashboardOrganizador from './pages/organizador/DashboardOrganizador';
+import CrearEvento from './pages/organizador/CrearEvento';
+import MisEventos from './pages/organizador/MisEventos';
+import EditarEvento from './pages/organizador/EditarEvento';
+import ParticipantesEvento from './pages/organizador/ParticipantesEvento';
 
 function obtenerSesion() {
     const token = sessionStorage.getItem('token');
@@ -123,6 +126,22 @@ export default function App() {
                     <Route
                         path="/organizador"
                         element={<DashboardOrganizador />}
+                    />
+                    <Route
+                        path="/organizador/crear-evento"
+                        element={<CrearEvento />}
+                    />
+                    <Route
+                        path="/organizador/eventos"
+                        element={<MisEventos />}
+                    />
+                    <Route
+                        path="/organizador/eventos/:id/editar"
+                        element={<EditarEvento />}
+                    />
+                    <Route
+                        path="/organizador/eventos/:id/participantes"
+                        element={<ParticipantesEvento />}
                     />
                 </Route>
 
