@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const fecha = value => value ? new Intl.DateTimeFormat('es-SV', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value)) : 'Fecha por confirmar';
@@ -83,6 +83,10 @@ export default function Home() {
       </header>
       <main className="siger-contenido">
         <div className="siger-encabezado"><h1>Eventos disponibles</h1><p className="siger-sec">Encuentra un evento y reserva tu cupo</p></div>
+        <Link to="/mis-reservas" className="btn btn-outline-primary">
+          <i className="bi bi-ticket-perforated me-2" />
+          Mis reservas
+        </Link>
         <section className="siger-resumen" aria-label="Resumen">
           <div className="siger-tarjeta siger-dato"><strong>{eventos.filter(e => e.estado === 'PROGRAMADO').length}</strong><span>Eventos activos</span></div>
           <div className="siger-tarjeta siger-dato"><strong>{reservas.length}</strong><span>Mis reservas</span></div>
