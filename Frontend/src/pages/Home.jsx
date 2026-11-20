@@ -77,7 +77,14 @@ export default function Home() {
         <div className="siger-logo">S</div><strong>SIGER</strong>
         <span className="siger-etiqueta-rol">{rol === 'PARTICIPANTE' ? 'Portal de participantes' : rol === 'ORGANIZADOR' ? 'Portal de organizadores' : 'Portal de administración'}</span>
         <div className="siger-barra__espacio" />
-        <span className="siger-notificacion" title="Notificaciones no leídas" aria-label={`${noLeidas} notificaciones no leídas`}>♧ <b>{noLeidas}</b></span>
+        <Link
+            to="/notificaciones"
+            className="siger-notificacion"
+            title="Ver notificaciones"
+        >
+          <i className="bi bi-bell"></i>
+          <b className="ms-1">{noLeidas}</b>
+        </Link>
         <span className="siger-avatar" title={`${usuario.nombre} ${usuario.apellido}`}>{iniciales}</span>
         <button className="siger-salir" type="button" onClick={salir}>Salir</button>
       </header>
