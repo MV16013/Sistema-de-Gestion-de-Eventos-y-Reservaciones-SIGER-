@@ -35,6 +35,7 @@ export default function Notificaciones() {
 
         try {
             await api.patch(`/notificaciones/${id}/leer`);
+            window.dispatchEvent(new Event('siger:notificaciones'));
 
             setNotificaciones(actuales =>
                 actuales.map(notificacion =>

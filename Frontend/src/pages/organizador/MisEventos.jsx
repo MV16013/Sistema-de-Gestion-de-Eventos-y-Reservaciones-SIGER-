@@ -1,7 +1,31 @@
+
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
+// Formatea las fechas sin alterar la hora almacenada.
+function formatearFecha(fecha) {
+    if (!fecha) return 'Sin fecha';
+
+    const valor = String(fecha).replace(' ', 'T');
+    const [fechaParte, horaParte] = valor.split('T');
+
+    if (!fechaParte || !horaParte) return fecha;
+
+    const [anio, mes, dia] = fechaParte.split('-');
+
+    const meses = [
+        'ene.', 'feb.', 'mar.', 'abr.',
+        'may.', 'jun.', 'jul.', 'ago.',
+        'sept.', 'oct.', 'nov.', 'dic.'
+    ];
+
+    const nombreMes = meses[Number(mes) - 1];
+
+    if (!nombreMes) return fecha;
+
+    return `${dia} ${nombreMes} ${anio} · ${horaParte.slice(0, 5)}`;
+}
 
 export default function MisEventos() {
     const [eventos, setEventos] = useState([]);
@@ -76,16 +100,27 @@ export default function MisEventos() {
         }
     }
 
+    const programados = eventos.filter(
+        evento => evento.estado === 'PROGRAMADO'
+    ).length;
+
+    const cancelados = eventos.filter(
+        evento => evento.estado === 'CANCELADO'
+    ).length;
+
     return (
         <main className="siger-contenido">
-            <div className="siger-encabezado">
+
+            {/* Encabezado */}
+            <div className="siger-encabezado mb-4">
                 <h1>Mis eventos</h1>
                 <p className="siger-sec">
-                    Administra los eventos que has creado.
+                    Administra y supervisa los eventos que has creado.
                 </p>
             </div>
 
-            <div className="d-flex flex-wrap gap-3 mb-4">
+            {/* Navegación */}
+            <div className="d-flex flex-wrap gap-2 mb-4">
                 <Link
                     to="/organizador"
                     className="btn btn-outline-primary"
@@ -104,107 +139,218 @@ export default function MisEventos() {
             </div>
 
             {error && (
-                <div className="alert alert-danger">
+                <div className="alert alert-danger" role="alert">
                     {error}
                 </div>
             )}
 
             {mensaje && (
                 <div className="alert alert-success" role="status">
+                    <i className="bi bi-check-circle me-2" />
                     {mensaje}
                 </div>
             )}
 
+            {/* Resumen */}
+            {!cargando && !error && (
+                <div className="row g-3 mb-4">
+                    <div className="col-12 col-md-4">
+                        <div className="siger-resumen-eventos">
+                            <i className="bi bi-calendar-event text-primary" />
+                            <div>
+                                <span>Total de eventos</span>
+                                <strong>{eventos.length}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                        <div className="siger-resumen-eventos">
+                            <i className="bi bi-calendar-check text-success" />
+                            <div>
+                                <span>Programados</span>
+                                <strong>{programados}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                        <div className="siger-resumen-eventos">
+                            <i className="bi bi-calendar-x text-secondary" />
+                            <div>
+                                <span>Cancelados</span>
+                                <strong>{cancelados}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {cargando ? (
-                <p>Cargando eventos...</p>
-            ) : eventos.length === 0 && !error ? (
-                <div className="siger-tarjeta p-4">
-                    <h2 className="h5">
-                        Todavía no has creado eventos.
-                    </h2>
-                    <p className="siger-sec mb-0">
-                        Crea tu primer evento para comenzar.
+                <div className="text-center py-5">
+                    <div
+                        className="spinner-border text-primary"
+                        role="status"
+                    >
+                        <span className="visually-hidden">
+                            Cargando...
+                        </span>
+                    </div>
+                    <p className="siger-sec mt-3">
+                        Cargando eventos...
                     </p>
                 </div>
-            ) : (
-                <section className="siger-catalogo">
-                    {eventos.map(evento => (
-                        <article
-                            className="siger-tarjeta siger-evento"
-                            key={evento.id_evento}
+            ) : error && eventos.length === 0 ? null
+                : eventos.length === 0 ? (
+                    <div className="siger-tarjeta p-4 text-center">
+                        <i className="bi bi-calendar-plus fs-1 text-primary" />
+
+                        <h2 className="h5 mt-3">
+                            Todavía no has creado eventos.
+                        </h2>
+
+                        <p className="siger-sec">
+                            Crea tu primer evento para comenzar.
+                        </p>
+
+                        <Link
+                            to="/organizador/crear-evento"
+                            className="btn btn-primary"
                         >
-                            <div className="siger-evento__banda">
-                                <span className="siger-evento__categoria">
-                                    {evento.estado}
-                                </span>
-                            </div>
+                            Crear evento
+                        </Link>
+                    </div>
+                ) : (
+                    <section className="row g-4">
 
-                            <div className="siger-evento__cuerpo">
-                                <h2>{evento.nombre}</h2>
+                        {eventos.map(evento => {
+                            const programado =
+                                evento.estado === 'PROGRAMADO';
 
-                                <p>
-                                    <i className="bi bi-geo-alt me-2" />
-                                    {evento.ubicacion}
-                                </p>
+                            return (
+                                <div
+                                    className="col-12 col-md-6 col-xl-4"
+                                    key={evento.id_evento}
+                                >
+                                    <article className="siger-evento-card h-100">
 
-                                <p>
-                                    {evento.descripcion ||
-                                        'Sin descripción'}
-                                </p>
+                                        {/* Cabecera */}
+                                        <div className="siger-evento-card__header">
+                                            <div className="siger-evento-card__icono">
+                                                <i
+                                                    className={
+                                                        programado
+                                                            ? 'bi bi-calendar-check'
+                                                            : 'bi bi-calendar-x'
+                                                    }
+                                                />
+                                            </div>
 
-                                <p>
-                                    <strong>Inicio:</strong>{' '}
-                                    {evento.fecha_inicio}
-                                </p>
+                                            <span
+                                                className={
+                                                    programado
+                                                        ? 'badge bg-success'
+                                                        : 'badge bg-secondary'
+                                                }
+                                            >
+                                            {evento.estado}
+                                        </span>
+                                        </div>
 
-                                <p>
-                                    <strong>Finalización:</strong>{' '}
-                                    {evento.fecha_fin}
-                                </p>
+                                        {/* Contenido */}
+                                        <div className="siger-evento-card__contenido">
 
-                                <p>
-                                    <strong>Capacidad:</strong>{' '}
-                                    {evento.capacidad_maxima}
-                                </p>
+                                            <h2 className="siger-evento-card__titulo">
+                                                {evento.nombre}
+                                            </h2>
 
-                                <div className="d-flex flex-wrap gap-2 mt-3">
-                                    {evento.estado === 'PROGRAMADO' && (
-                                        <Link
-                                            to={`/organizador/eventos/${evento.id_evento}/editar`}
-                                            className="btn btn-outline-primary"
-                                        >
-                                            <i className="bi bi-pencil-square me-2" />
-                                            Editar
-                                        </Link>
-                                    )}
+                                            <p className="siger-evento-card__ubicacion">
+                                                <i className="bi bi-geo-alt me-2" />
+                                                {evento.ubicacion}
+                                            </p>
 
-                                    <Link
-                                        to={`/organizador/eventos/${evento.id_evento}/participantes`}
-                                        className="btn btn-outline-secondary"
-                                    >
-                                        <i className="bi bi-people me-2" />
-                                        Participantes
-                                    </Link>
+                                            <p className="siger-evento-card__descripcion">
+                                                {evento.descripcion ||
+                                                    'Sin descripción disponible.'}
+                                            </p>
 
-                                    {evento.estado === 'PROGRAMADO' && (
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-danger"
-                                            disabled={cancelandoId !== null}
-                                            onClick={() => cancelarEvento(evento)}
-                                        >
-                                            <i className="bi bi-x-circle me-2" />
-                                            {cancelandoId === evento.id_evento
-                                                ? 'Cancelando...'
-                                                : 'Cancelar'}
-                                        </button>
-                                    )}
+                                            <div className="siger-evento-card__detalles">
+                                                <div>
+                                                    <i className="bi bi-calendar-event" />
+                                                    <span>
+                                                    <small>Inicio</small>
+                                                    <strong>
+                                                        {formatearFecha(evento.fecha_inicio)}
+                                                    </strong>
+                                                </span>
+                                                </div>
+
+                                                <div>
+                                                    <i className="bi bi-calendar-check" />
+                                                    <span>
+                                                    <small>Finalización</small>
+                                                    <strong>
+                                                        {formatearFecha(evento.fecha_fin)}
+                                                    </strong>
+                                                </span>
+                                                </div>
+
+                                                <div>
+                                                    <i className="bi bi-people" />
+                                                    <span>
+                                                    <small>Capacidad máxima</small>
+                                                    <strong>
+                                                        {evento.capacidad_maxima} cupos
+                                                    </strong>
+                                                </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Acciones */}
+                                            <div className="siger-evento-card__acciones">
+
+                                                {programado && (
+                                                    <Link
+                                                        to={`/organizador/eventos/${evento.id_evento}/editar`}
+                                                        className="btn btn-outline-primary"
+                                                    >
+                                                        <i className="bi bi-pencil-square me-2" />
+                                                        Editar
+                                                    </Link>
+                                                )}
+
+                                                <Link
+                                                    to={`/organizador/eventos/${evento.id_evento}/participantes`}
+                                                    className="btn btn-outline-secondary"
+                                                >
+                                                    <i className="bi bi-people me-2" />
+                                                    Participantes
+                                                </Link>
+
+                                                {programado && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger"
+                                                        disabled={cancelandoId !== null}
+                                                        onClick={() =>
+                                                            cancelarEvento(evento)
+                                                        }
+                                                    >
+                                                        <i className="bi bi-x-circle me-2" />
+                                                        {cancelandoId === evento.id_evento
+                                                            ? 'Cancelando...'
+                                                            : 'Cancelar'}
+                                                    </button>
+                                                )}
+
+                                            </div>
+                                        </div>
+                                    </article>
                                 </div>
-                            </div>
-                        </article>
-                    ))}
-                </section>
-            )}
+                            );
+                        })}
+                    </section>
+                )}
         </main>
     );
 }

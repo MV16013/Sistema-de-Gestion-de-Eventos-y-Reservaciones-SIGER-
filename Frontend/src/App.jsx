@@ -14,6 +14,7 @@ import ParticipantesEvento from './pages/organizador/ParticipantesEvento';
 import DashboardAdmin from './pages/admin/DashboardAdmin';
 import Usuarios from './pages/admin/Usuarios';
 import EventosAdmin from './pages/admin/Eventos';
+import Reportes from './pages/admin/Reportes';
 function obtenerSesion() {
     const token = sessionStorage.getItem('token');
 
@@ -181,6 +182,10 @@ export default function App() {
                     <Route
                         path="/admin/eventos"
                         element={<EventosAdmin />}
+                    />
+                    <Route
+                        path="/admin/reportes"
+                        element={<Reportes />}
                     />
                 </Route>
 

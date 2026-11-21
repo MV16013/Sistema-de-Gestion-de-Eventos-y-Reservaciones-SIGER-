@@ -30,10 +30,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/organizador/eventos', [EventoController::class, 'misEventos']);
     Route::get('/organizador/eventos/{evento}/editar', [EventoController::class, 'editar'] );
     Route::get('/organizador/eventos/{evento}/participantes',[EventoController::class, 'participantes']);
+    Route::get('/organizador/resumen',[EventoController::class, 'resumenOrganizador']);
 
     // Administración de usuarios
     Route::get('/admin/usuarios', [AdminController::class, 'usuarios']);
     Route::get('/admin/eventos', [AdminController::class, 'eventos']);
+    Route::get('/admin/reportes', [AdminController::class, 'reportes']);
 
     // Notificaciones del usuario autenticado
     Route::get('/notificaciones', [NotificacionController::class, 'index']);

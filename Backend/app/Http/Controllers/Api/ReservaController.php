@@ -8,6 +8,7 @@ use App\Models\Reserva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\Notificacion;
 
 class ReservaController extends Controller
 {
@@ -72,6 +73,17 @@ class ReservaController extends Controller
                     ),
             ]);
 
+            // Notificar al participante que su reserva fue confirmada.
+            Notificacion::create([
+                'id_usuario' => $usuario->id_usuario,
+                'titulo' => 'Reserva confirmada',
+                'mensaje' => 'Tu reserva para el evento "' .
+                    $evento->nombre .
+                    '" fue confirmada correctamente. Código: ' .
+                    $reserva->codigo_confirmacion,
+                'leida' => false,
+            ]);
+
             return response()->json([
                 'mensaje' => 'Reserva creada correctamente',
                 'reserva' => $reserva,
@@ -99,6 +111,15 @@ class ReservaController extends Controller
 
     public function cancelar(Request $request, Reserva $reserva)
     {
+        Notificacion::create([
+            'id_usuario' => $reserva->id_usuario,
+            'titulo' => 'Reserva cancelada',
+            'mensaje' => 'La reserva #' .
+                $reserva->id_reserva .
+                ' fue cancelada correctamente.',
+            'leida' => false,
+        ]);
+
         $usuario = $request->user();
 
         if ($usuario->rol?->nombre !== 'PARTICIPANTE') {

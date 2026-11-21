@@ -7,6 +7,8 @@ use App\Models\Usuario;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Evento;
+use App\Models\Reserva;
+use App\Models\Asistencia;
 
 class AdminController extends Controller
 {
@@ -69,5 +71,57 @@ class AdminController extends Controller
             'eventos' => $eventos,
         ]);
     }
+
+    public function reportes(Request $request): JsonResponse
+    {
+        if ($request->user()->rol?->nombre !== 'ADMINISTRADOR') {
+            return response()->json([
+                'mensaje' => 'No tienes permisos para consultar reportes.'
+            ], 403);
+        }
+
+        $resumen = [
+            'usuarios' => Usuario::count(),
+            'eventos' => Evento::count(),
+            'eventos_programados' => Evento::where(
+                'estado', 'PROGRAMADO'
+            )->count(),
+            'eventos_cancelados' => Evento::where(
+                'estado', 'CANCELADO'
+            )->count(),
+            'reservas' => Reserva::count(),
+            'reservas_confirmadas' => Reserva::where(
+                'estado', 'CONFIRMADA'
+            )->count(),
+            'reservas_canceladas' => Reserva::where(
+                'estado', 'CANCELADA'
+            )->count(),
+            'asistencias' => Asistencia::count(),
+        ];
+
+        $eventos = Evento::query()
+            ->withCount([
+                'reservas',
+                'reservas as confirmadas' => fn ($query) =>
+                $query->where('estado', 'CONFIRMADA'),
+                'reservas as canceladas' => fn ($query) =>
+                $query->where('estado', 'CANCELADA'),
+                'reservas as asistencias' => fn ($query) =>
+                $query->whereHas('asistencia'),
+            ])
+            ->orderByDesc('id_evento')
+            ->get([
+                'id_evento',
+                'nombre',
+                'estado',
+                'capacidad_maxima',
+            ]);
+
+        return response()->json([
+            'resumen' => $resumen,
+            'eventos' => $eventos,
+        ]);
+    }
+
 
 }

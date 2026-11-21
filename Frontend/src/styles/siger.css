@@ -363,3 +363,450 @@ body{
 .siger-notificacion:hover {
     color: #7c3aed;
 }
+
+
+/* ==========================================
+   SIGER - MIS EVENTOS DEL ORGANIZADOR
+   ========================================== */
+
+/* Tarjetas de resumen */
+
+.siger-resumen-eventos {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+    min-height: 115px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.03);
+}
+
+.siger-resumen-eventos > i {
+    font-size: 30px;
+}
+
+.siger-resumen-eventos div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.siger-resumen-eventos span {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.siger-resumen-eventos strong {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Tarjetas de eventos */
+
+.siger-evento-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.siger-evento-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.09);
+}
+
+/* Cabecera */
+
+.siger-evento-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 0;
+}
+
+.siger-evento-card__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 23px;
+}
+
+/* Contenido */
+
+.siger-evento-card__contenido {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 22px 24px 24px;
+}
+
+.siger-evento-card__titulo {
+    margin-bottom: 12px;
+    color: #0f172a;
+    font-size: 21px;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+.siger-evento-card__ubicacion {
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.siger-evento-card__descripcion {
+    color: #64748b;
+    line-height: 1.6;
+    min-height: 50px;
+    margin-bottom: 22px;
+}
+
+/* Información del evento */
+
+.siger-evento-card__detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.siger-evento-card__detalles > div {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.siger-evento-card__detalles i {
+    color: #2563eb;
+    font-size: 19px;
+}
+
+.siger-evento-card__detalles span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.siger-evento-card__detalles small {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.siger-evento-card__detalles strong {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Botones */
+
+.siger-evento-card__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.siger-evento-card__acciones .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 9px 13px;
+}
+
+/* Adaptación a móviles */
+
+@media (max-width: 576px) {
+    .siger-evento-card__header {
+        padding: 20px 20px 0;
+    }
+
+    .siger-evento-card__contenido {
+        padding: 20px;
+    }
+
+    .siger-evento-card__acciones .btn {
+        flex: 1 1 auto;
+    }
+}
+
+
+/* =========================================
+   SIGER - PORTAL DEL PARTICIPANTE
+   ========================================= */
+
+/* Estadísticas */
+
+.siger-home__estadistica {
+    background: #ffffff;
+    border: 1px solid #e1e8f2;
+    border-radius: 18px;
+    padding: 28px;
+    min-height: 175px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.035);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.siger-home__estadistica:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+}
+
+.siger-home__estadistica > i {
+    font-size: 30px;
+    color: #2563eb;
+}
+
+.siger-home__estadistica strong {
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1;
+    color: #0f172a;
+}
+
+.siger-home__estadistica span {
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* Buscador */
+
+.siger-home__busqueda {
+    background: #ffffff;
+    border: 1px solid #e1e8f2;
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.siger-home__buscador {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+}
+
+.siger-home__buscador > i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.siger-home__buscador input {
+    height: 48px;
+    padding-left: 46px;
+    border: 1px solid #d9e2ef;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.siger-home__buscador input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background: #ffffff;
+}
+
+.siger-home__filtro {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Tarjetas de eventos */
+
+.siger-home__evento {
+    background: #ffffff;
+    border: 1px solid #e1e8f2;
+    border-radius: 18px;
+    overflow: hidden;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.035);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.siger-home__evento:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+.siger-home__evento-top {
+    padding: 24px 24px 8px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.siger-home__evento-icono {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #eff6ff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.siger-home__evento-icono i {
+    font-size: 25px;
+    color: #2563eb;
+}
+
+.siger-home__evento-top .badge {
+    font-size: 12px;
+    padding: 8px 11px;
+    border-radius: 8px;
+}
+
+.siger-home__evento-cuerpo {
+    padding: 16px 24px 24px;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.siger-home__evento-cuerpo h2 {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #0f172a;
+    margin-bottom: 14px;
+}
+
+.siger-home__descripcion {
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 22px;
+}
+
+/* Detalles */
+
+.siger-home__detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: auto;
+}
+
+.siger-home__detalles > div {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #475569;
+    font-size: 14px;
+}
+
+.siger-home__detalles i {
+    color: #2563eb;
+    font-size: 17px;
+    flex-shrink: 0;
+}
+
+.siger-home__detalles span {
+    overflow-wrap: anywhere;
+}
+
+/* Botones */
+
+.siger-home__evento-acciones {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.siger-home__evento-acciones .btn {
+    width: 100%;
+    min-height: 46px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.siger-home__reservado {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    opacity: 1 !important;
+    cursor: not-allowed;
+}
+
+.siger-home__reservado:disabled {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+    opacity: 1;
+}
+
+/* Estado vacío */
+
+.siger-home__vacio {
+    background: #ffffff;
+    border: 1px solid #e1e8f2;
+    border-radius: 18px;
+    padding: 55px 24px;
+    text-align: center;
+}
+
+.siger-home__vacio > i {
+    font-size: 42px;
+    color: #94a3b8;
+}
+
+/* Responsive */
+
+@media (max-width: 767px) {
+    .siger-home__busqueda {
+        padding: 18px;
+    }
+
+    .siger-home__buscador {
+        max-width: 100%;
+    }
+
+    .siger-home__estadistica {
+        padding: 22px;
+        min-height: 145px;
+    }
+
+    .siger-home__evento-cuerpo {
+        padding: 16px 20px 20px;
+    }
+
+    .siger-home__evento-top {
+        padding: 20px 20px 8px;
+    }
+}

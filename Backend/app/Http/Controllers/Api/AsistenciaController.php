@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Asistencia;
+use App\Models\Notificacion;
 use App\Models\Reserva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,11 @@ class AsistenciaController extends Controller
 
         $datos = $request->validate([
             'codigo_confirmacion' => ['required', 'string'],
-            'id_evento' => ['required', 'integer', 'exists:evento,id_evento', ],
+            'id_evento' => [
+                'required',
+                'integer',
+                'exists:evento,id_evento',
+            ],
         ]);
 
         return DB::transaction(function () use ($usuario, $datos) {
@@ -63,27 +68,57 @@ class AsistenciaController extends Controller
 
             if (
                 $usuario->rol?->nombre === 'ORGANIZADOR'
-                && $evento->id_organizador !== $usuario->id_usuario
+                && (int) $evento->id_organizador !== (int) $usuario->id_usuario
             ) {
                 return response()->json([
                     'mensaje' => 'No puedes registrar asistencias de otro organizador.'
                 ], 403);
             }
 
-            if (Asistencia::where('id_reserva', $reserva->id_reserva)->exists()) {
+            if (Asistencia::where(
+                'id_reserva',
+                $reserva->id_reserva
+            )->exists()) {
                 return response()->json([
                     'mensaje' => 'Esta asistencia ya fue registrada.'
                 ], 409);
             }
 
+            // 1. Registrar la asistencia.
             $asistencia = Asistencia::create([
                 'id_reserva' => $reserva->id_reserva,
             ]);
+
+            // 2. Notificar al participante.
+            Notificacion::create([
+                'id_usuario' => $reserva->id_usuario,
+                'titulo' => 'Asistencia registrada',
+                'mensaje' => 'Tu asistencia al evento "' .
+                    $evento->nombre .
+                    '" fue registrada correctamente.',
+                'leida' => false,
+            ]);
+
+            // 3. Notificar al usuario que registró la asistencia.
+            if (
+                (int) $usuario->id_usuario !==
+                (int) $reserva->id_usuario
+            ) {
+                Notificacion::create([
+                    'id_usuario' => $usuario->id_usuario,
+                    'titulo' => 'Asistencia confirmada',
+                    'mensaje' => 'Registraste correctamente la asistencia ' .
+                        'de la reserva #' . $reserva->id_reserva .
+                        ' para el evento "' . $evento->nombre . '".',
+                    'leida' => false,
+                ]);
+            }
 
             return response()->json([
                 'mensaje' => 'Asistencia registrada correctamente',
                 'asistencia' => $asistencia,
             ], 201);
+
         }, 3);
     }
 }

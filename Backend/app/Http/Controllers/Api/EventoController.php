@@ -7,6 +7,11 @@ use App\Models\Evento;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Reserva;
+use App\Models\Asistencia;
+use App\Models\Notificacion;
+use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 
 class EventoController extends Controller
 {
@@ -150,21 +155,47 @@ class EventoController extends Controller
         ]);
     }
 
-    public function cancelar(\Illuminate\Http\Request $request, \App\Models\Evento $evento)
+    public function cancelar(Request $request, Evento $evento)
     {
-        // Verificar permisos del usuario autenticado
-        \Illuminate\Support\Facades\Gate::authorize('cancel', $evento);
+        Gate::authorize('cancel', $evento);
 
-        // Cambiar el estado sin eliminar el registro
-        $evento->estado = 'CANCELADO';
-        $evento->save();
+        return DB::transaction(function () use ($request, $evento) {
 
-        return response()->json([
-            'mensaje' => 'Evento cancelado correctamente',
-            'evento' => $evento
-        ], 200);
+            // Evitar cancelar dos veces el mismo evento.
+            if ($evento->estado !== 'PROGRAMADO') {
+                return response()->json([
+                    'mensaje' => 'El evento ya no está disponible para cancelar.'
+                ], 422);
+            }
+
+            // Cancelar el evento.
+            $evento->estado = 'CANCELADO';
+            $evento->save();
+
+            // Buscar a todos los administradores.
+            $administradores = Usuario::whereHas('rol', function ($query) {
+                $query->where('nombre', 'ADMINISTRADOR');
+            })->get();
+
+            // Crear una notificación para cada administrador.
+            foreach ($administradores as $administrador) {
+
+                Notificacion::create([
+                    'id_usuario' => $administrador->id_usuario,
+                    'titulo' => 'Evento cancelado',
+                    'mensaje' => 'El evento "' . $evento->nombre .
+                        '" fue cancelado por ' .
+                        $request->user()->nombre . '.',
+                    'leida' => false,
+                ]);
+            }
+
+            return response()->json([
+                'mensaje' => 'Evento cancelado correctamente',
+                'evento' => $evento,
+            ]);
+        }, 3);
     }
-
 
     public function participantes(Request $request, Evento $evento): JsonResponse
     {
@@ -230,5 +261,44 @@ class EventoController extends Controller
             'participantes' => $reservas->values(),
         ]);
     }
+
+
+    public function resumenOrganizador(Request $request)
+    {
+        $usuario = $request->user();
+
+        if ($usuario->rol?->nombre !== 'ORGANIZADOR') {
+            return response()->json([
+                'mensaje' => 'No tienes permiso para consultar este resumen.'
+            ], 403);
+        }
+
+        $eventos = Evento::where(
+            'id_organizador',
+            $usuario->id_usuario
+        );
+
+        $totalEventos = (clone $eventos)->count();
+
+        $participantes = Reserva::whereHas('evento', function ($query) use ($usuario) {
+            $query->where('id_organizador', $usuario->id_usuario);
+        })
+            ->whereIn('estado', ['PENDIENTE', 'CONFIRMADA'])
+            ->count();
+
+        $asistencias = Asistencia::whereHas('reserva.evento', function ($query) use ($usuario) {
+            $query->where('id_organizador', $usuario->id_usuario);
+        })
+            ->count();
+
+        return response()->json([
+            'resumen' => [
+                'mis_eventos' => $totalEventos,
+                'participantes_inscritos' => $participantes,
+                'asistencias' => $asistencias,
+            ]
+        ]);
+    }
+
 
 }
