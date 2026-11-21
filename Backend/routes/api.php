@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Administración de usuarios
     Route::get('/admin/usuarios', [AdminController::class, 'usuarios']);
+    Route::get('/admin/eventos', [AdminController::class, 'eventos']);
 
     // Notificaciones del usuario autenticado
     Route::get('/notificaciones', [NotificacionController::class, 'index']);
