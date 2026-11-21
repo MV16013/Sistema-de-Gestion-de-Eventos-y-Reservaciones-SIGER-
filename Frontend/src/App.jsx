@@ -1,9 +1,4 @@
-import {
-    BrowserRouter,
-    Navigate,
-    Route,
-    Routes
-} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 
 import Login from './pages/Login';
 import Registro from './pages/Registro';
@@ -16,6 +11,8 @@ import CrearEvento from './pages/organizador/CrearEvento';
 import MisEventos from './pages/organizador/MisEventos';
 import EditarEvento from './pages/organizador/EditarEvento';
 import ParticipantesEvento from './pages/organizador/ParticipantesEvento';
+import DashboardAdmin from './pages/admin/DashboardAdmin';
+import Usuarios from './pages/admin/Usuarios';
 
 function obtenerSesion() {
     const token = sessionStorage.getItem('token');
@@ -31,7 +28,6 @@ function obtenerSesion() {
     }
 
     if (!token || !usuario) return null;
-
     return usuario;
 }
 
@@ -164,6 +160,26 @@ export default function App() {
                         element={<Notificaciones />}
                     />
                 </Route>
+
+
+                {/* Portal de administradores */}
+                <Route
+                    element={
+                        <RutaProtegida roles={['ADMINISTRADOR']}>
+                            <PortalLayout />
+                        </RutaProtegida>
+                    }
+                >
+                    <Route
+                        path="/admin"
+                        element={<DashboardAdmin />}
+                    />
+                    <Route
+                        path="/admin/usuarios"
+                        element={<Usuarios />}
+                    />
+                </Route>
+
 
                 {/* Ruta desconocida */}
                 <Route
